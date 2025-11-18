@@ -233,40 +233,100 @@ export default async function handler(req, res) {
 // Helper function to parse multipart form data using Busboy
 function parseFormData(req) {
   return new Promise((resolve, reject) => {
-    const bb = busboy({ headers: req.headers });
-    const fields = {};
-    const files = {};
+    try {
+      // Check if req is a stream or has body
+      const requestStream = req.body ? null : req;
+      
+      const bb = busboy({ 
+        headers: req.headers,
+        limits: {
+          fileSize: 100 * 1024 * 1024 // 100 MB
+        }
+      });
+      
+      const fields = {};
+      const files = {};
+      let fileCount = 0;
+      let fieldCount = 0;
+      let finished = false;
 
-    bb.on('file', (name, file, info) => {
-      const { filename, encoding, mimeType } = info;
-      const chunks = [];
+      bb.on('file', (name, file, info) => {
+        const { filename, encoding, mimeType } = info;
+        const chunks = [];
+        fileCount++;
 
-      file.on('data', (data) => {
-        chunks.push(data);
+        file.on('data', (data) => {
+          chunks.push(data);
+        });
+
+        file.on('end', () => {
+          files[name] = {
+            filename,
+            mimetype: mimeType,
+            buffer: Buffer.concat(chunks)
+          };
+          fileCount--;
+          checkFinish();
+        });
+
+        file.on('error', (err) => {
+          console.error('File stream error:', err);
+          fileCount--;
+          checkFinish();
+        });
       });
 
-      file.on('end', () => {
-        files[name] = {
-          filename,
-          mimetype: mimeType,
-          buffer: Buffer.concat(chunks)
-        };
+      bb.on('field', (name, value) => {
+        fields[name] = value;
+        fieldCount++;
       });
-    });
 
-    bb.on('field', (name, value) => {
-      fields[name] = value;
-    });
+      bb.on('finish', () => {
+        finished = true;
+        checkFinish();
+      });
 
-    bb.on('finish', () => {
-      resolve({ fields, files });
-    });
+      bb.on('error', (err) => {
+        console.error('Busboy error:', err);
+        reject(err);
+      });
 
-    bb.on('error', (err) => {
-      reject(err);
-    });
+      // Handle Vercel's request format
+      if (requestStream) {
+        requestStream.pipe(bb);
+      } else if (req.body) {
+        // If body is already parsed, we need to handle it differently
+        // For Vercel, we might need to reconstruct the stream
+        if (Buffer.isBuffer(req.body)) {
+          const stream = require('stream');
+          const bufferStream = new stream.PassThrough();
+          bufferStream.end(req.body);
+          bufferStream.pipe(bb);
+        } else {
+          // Body might be a string or object
+          reject(new Error('Unsupported request body format'));
+        }
+      } else {
+        reject(new Error('Cannot parse request: no body or stream'));
+      }
 
-    req.pipe(bb);
+      function checkFinish() {
+        if (finished && fileCount === 0) {
+          resolve({ fields, files });
+        }
+      }
+
+      // Timeout protection
+      setTimeout(() => {
+        if (!finished) {
+          reject(new Error('Request timeout while parsing form data'));
+        }
+      }, 30000); // 30 second timeout
+
+    } catch (error) {
+      console.error('parseFormData error:', error);
+      reject(error);
+    }
   });
 }
 
