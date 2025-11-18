@@ -27,6 +27,18 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if environment variables are set
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+      console.error('Missing environment variables:', {
+        hasUrl: !!process.env.SUPABASE_URL,
+        hasKey: !!process.env.SUPABASE_ANON_KEY
+      });
+      return res.status(500).json({
+        success: false,
+        message: 'خطأ في إعدادات الخادم - يرجى التحقق من متغيرات البيئة'
+      });
+    }
+
     // Parse multipart form data
     const formData = await parseFormData(req);
     
@@ -223,9 +235,25 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Registration error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Provide more specific error messages
+    let errorMessage = 'خطأ في الخادم';
+    if (error.message && error.message.includes('timeout')) {
+      errorMessage = 'انتهت مهلة الطلب - الملف كبير جداً أو الاتصال بطيء';
+    } else if (error.message && error.message.includes('parse')) {
+      errorMessage = 'خطأ في معالجة البيانات المرسلة';
+    } else if (error.message && error.message.includes('upload')) {
+      errorMessage = 'خطأ في رفع الملف - يرجى المحاولة مرة أخرى';
+    }
+    
     res.status(500).json({
       success: false,
-      message: 'خطأ في الخادم'
+      message: errorMessage
     });
   }
 }
