@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire d'Inscription</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e0d5f5 0%, #d4c5f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .required-asterisk {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+        .form-input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 8px 0;
+            font-size: 16px;
+            background: transparent;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-bottom-color: #8b5cf6;
+        }
+        .form-input::placeholder {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-top: 12px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .radio-option label {
+            cursor: pointer;
+            color: #333;
+        }
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper select {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 8px 0;
+            font-size: 16px;
+            background: transparent;
+            appearance: none;
+            cursor: pointer;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b5cf6;
+            pointer-events: none;
+        }
+        .file-upload-info {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+        .file-upload-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .file-upload-btn:hover {
+            background: #7c3aed;
+        }
+        .file-upload-btn input[type="file"] {
+            display: none;
+        }
+        .file-name {
+            margin-top: 8px;
+            color: #059669;
+            font-size: 14px;
+        }
+        .btn-submit {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-submit:hover {
+            background: #2563eb;
+        }
+        .btn-submit:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .btn-clear {
+            background: transparent;
+            color: #6b7280;
+            border: none;
+            padding: 14px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .btn-clear:hover {
+            color: #374151;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        .error-message {
+            background: #ef4444;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="registrationForm" class="space-y-4">
+            <!-- Nom -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Nom
+                </label>
+                <input type="text" id="nom" name="nom" required
+                    class="form-input"
+                    placeholder="إجابتك">
+            </div>
+
+            <!-- Prénom -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Prénom
+                </label>
+                <input type="text" id="prenom" name="prenom" required
+                    class="form-input"
+                    placeholder="إجابتك">
+            </div>
+
+            <!-- Date de Naissance -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Date de Naissance
+                </label>
+                <input type="date" id="dateNaissance" name="date_naissance" required
+                    class="form-input">
+            </div>
+
+            <!-- Email -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Email
+                </label>
+                <input type="email" id="email" name="email" required
+                    class="form-input"
+                    placeholder="إجابتك">
+            </div>
+
+            <!-- Téléphone -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Téléphone
+                </label>
+                <input type="tel" id="telephone" name="telephone" required
+                    class="form-input"
+                    placeholder="إجابتك">
+            </div>
+
+            <!-- CNE / Massar Number -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> CNE / Massar Number
+                </label>
+                <input type="text" id="cneMassar" name="cne_massar" required
+                    class="form-input"
+                    placeholder="إجابتك">
+            </div>
+
+            <!-- Niveau -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Niveau
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="niveau1" name="niveau" value="Première année" required>
+                        <label for="niveau1">Première année</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="niveau2" name="niveau" value="Deuxième année" required>
+                        <label for="niveau2">Deuxième année</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filière -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Filière
+                </label>
+                <div class="select-wrapper">
+                    <select id="filiere" name="filiere" required>
+                        <option value="">اختیار</option>
+                        <option value="DAI">DAI</option>
+                        <option value="PME">PME</option>
+                        <option value="ESA">ESA</option>
+                        <option value="EII">EII</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Photo d'identité -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Photo d'identité (Instruction: 'Fond blanc, visage clair, format pro')
+                </label>
+                <div class="file-upload-info">
+                    يمكنك تحميل ملف واحد متوافق. الحد الأقصى لحجم الملف: 100 ميجابايت.
+                </div>
+                <label class="file-upload-btn">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>إضافة ملف</span>
+                    <input type="file" id="photoIdentite" name="photo_identite" accept="image/*,.pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp" required>
+                </label>
+                <div id="photoFileName" class="file-name"></div>
+            </div>
+
+            <!-- Certificat de scolarité -->
+            <div class="form-card">
+                <label class="form-label">
+                    <span class="required-asterisk">*</span> Certificat de scolarité
+                </label>
+                <div class="file-upload-info">
+                    يمكنك تحميل ملف واحد متوافق. الحد الأقصى لحجم الملف: 100 ميجابايت.
+                </div>
+                <label class="file-upload-btn">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>إضافة ملف</span>
+                    <input type="file" id="certificatScolarite" name="certificat_scolarite" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.bmp,.webp,.txt,.rtf" required>
+                </label>
+                <div id="certificatFileName" class="file-name"></div>
+            </div>
+
+            <!-- Question -->
+            <div class="form-card">
+                <label class="form-label">
+                    ? Avez-vous une question
+                </label>
+                <input type="text" id="question" name="question"
+                    class="form-input"
+                    placeholder="إجابتك">
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" id="clearBtn" class="btn-clear">
+                    محو النموذج
+                </button>
+                <button type="submit" id="submitBtn" class="btn-submit">
+                    <span id="btnText">إرسال</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span>تم إرسال النموذج بنجاح!</span>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            <span id="errorText">حدث خطأ</span>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const clearBtn = document.getElementById('clearBtn');
+        const successMsg = document.getElementById('successMessage');
+        const errorMsg = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        // File upload handlers
+        document.getElementById('photoIdentite').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            document.getElementById('photoFileName').textContent = fileName || '';
+        });
+
+        document.getElementById('certificatScolarite').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            document.getElementById('certificatFileName').textContent = fileName || '';
+        });
+
+        // Clear form
+        clearBtn.addEventListener('click', function() {
+            if (confirm('هل أنت متأكد من محو النموذج؟')) {
+                form.reset();
+                document.getElementById('photoFileName').textContent = '';
+                document.getElementById('certificatFileName').textContent = '';
+                successMsg.style.display = 'none';
+                errorMsg.style.display = 'none';
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Change button state
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>جاري الإرسال...';
+            
+            // Hide messages
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            try {
+                const formData = new FormData(form);
+
+                // Allowed file types
+                const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'application/pdf'];
+                const allowedDocumentTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'text/plain', 'application/rtf'];
+
+                // Validate file sizes and types (100 MB = 100 * 1024 * 1024 bytes)
+                const maxFileSize = 100 * 1024 * 1024;
+                const photoFile = formData.get('photo_identite');
+                const certificatFile = formData.get('certificat_scolarite');
+
+                if (photoFile && photoFile.size > 0) {
+                    if (photoFile.size > maxFileSize) {
+                        errorText.textContent = 'حجم ملف الصورة كبير جداً (الحد الأقصى: 100 ميجابايت)';
+                        errorMsg.style.display = 'block';
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'إرسال';
+                        return;
+                    }
+                    if (!allowedImageTypes.includes(photoFile.type)) {
+                        errorText.textContent = 'نوع ملف الصورة غير مدعوم. يرجى استخدام: JPG, PNG, GIF, BMP, WebP, أو PDF';
+                        errorMsg.style.display = 'block';
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'إرسال';
+                        return;
+                    }
+                }
+
+                if (certificatFile && certificatFile.size > 0) {
+                    if (certificatFile.size > maxFileSize) {
+                        errorText.textContent = 'حجم ملف الشهادة كبير جداً (الحد الأقصى: 100 ميجابايت)';
+                        errorMsg.style.display = 'block';
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'إرسال';
+                        return;
+                    }
+                    if (!allowedDocumentTypes.includes(certificatFile.type)) {
+                        errorText.textContent = 'نوع ملف الشهادة غير مدعوم. يرجى استخدام: PDF, DOC, DOCX, JPG, PNG, GIF, BMP, WebP, TXT, أو RTF';
+                        errorMsg.style.display = 'block';
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'إرسال';
+                        return;
+                    }
+                }
+
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Registration successful
+                    successMsg.style.display = 'block';
+                    form.reset();
+                    document.getElementById('photoFileName').textContent = '';
+                    document.getElementById('certificatFileName').textContent = '';
+                    
+                    // Scroll to success message
+                    successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    
+                } else {
+                    // Registration failed
+                    errorText.textContent = result.message || 'فشل إرسال النموذج';
+                    errorMsg.style.display = 'block';
+                    errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorText.textContent = 'خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+                errorMsg.style.display = 'block';
+                errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.textContent = 'إرسال';
+            }
+        });
+
+        // Format phone number
+        document.getElementById('telephone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('212')) {
+                value = '+' + value;
+            } else if (value.startsWith('0')) {
+                value = '+212' + value.substring(1);
+            } else if (value.startsWith('6') || value.startsWith('7')) {
+                value = '+212' + value;
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
+
