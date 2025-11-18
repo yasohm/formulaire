@@ -435,6 +435,23 @@
                     body: formData
                 });
 
+                // Check if response is ok
+                if (!response.ok) {
+                    // Try to get error message from response
+                    let errorMessage = 'فشل إرسال النموذج';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (e) {
+                        // If response is not JSON, use status text
+                        errorMessage = `خطأ في الخادم (${response.status}): ${response.statusText}`;
+                    }
+                    errorText.textContent = errorMessage;
+                    errorMsg.style.display = 'block';
+                    errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -456,7 +473,24 @@
 
             } catch (error) {
                 console.error('Registration error:', error);
-                errorText.textContent = 'خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+                console.error('Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                // Provide more specific error messages
+                let errorMessage = 'خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+                
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    errorMessage = 'لا يمكن الوصول إلى الخادم. تأكد من أن الموقع يعمل وأن متغيرات البيئة مضبوطة في Vercel.';
+                } else if (error.name === 'TypeError' && error.message.includes('JSON')) {
+                    errorMessage = 'خطأ في معالجة الاستجابة من الخادم.';
+                } else if (error.message) {
+                    errorMessage = `خطأ: ${error.message}`;
+                }
+                
+                errorText.textContent = errorMessage;
                 errorMsg.style.display = 'block';
                 errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } finally {
